@@ -1,0 +1,79 @@
+{
+  "implicitDependencies": [],
+  "name": "python-core",
+  "tags": ["type:library", "language:python", "scope:python-core", "deployable:false"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "inputs": ["python", "^python"],
+      "options": {
+        "command": "uv tool run --from uv==0.13.1 uv run --frozen --no-sync --project ../../.. poe build",
+        "cwd": "packages/python/core"
+      }
+    },
+    "check": {
+      "executor": "nx:run-commands",
+      "inputs": ["python", "^python"],
+      "options": {
+        "command": "uv tool run --from uv==0.13.1 uv run --frozen --no-sync --project ../../.. poe check",
+        "cwd": "packages/python/core"
+      }
+    },
+    "dependency-isolation": {
+      "executor": "nx:run-commands",
+      "inputs": ["python", "^python"],
+      "options": {
+        "command": "uv tool run --from uv==0.13.1 uv run --frozen --no-sync --project ../../.. poe dependency-isolation",
+        "cwd": "packages/python/core"
+      }
+    },
+    "deptry": {
+      "executor": "nx:run-commands",
+      "inputs": ["python", "^python"],
+      "options": {
+        "command": "uv tool run --from uv==0.13.1 uv run --frozen --no-sync --project ../../.. poe deptry",
+        "cwd": "packages/python/core"
+      }
+    },
+    "format-check": {
+      "executor": "nx:run-commands",
+      "inputs": ["python", "^python"],
+      "options": {
+        "command": "uv tool run --from uv==0.13.1 uv run --frozen --no-sync --project ../../.. poe format-check",
+        "cwd": "packages/python/core"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "inputs": ["python", "^python"],
+      "options": {
+        "command": "uv tool run --from uv==0.13.1 uv run --frozen --no-sync --project ../../.. poe lint",
+        "cwd": "packages/python/core"
+      }
+    },
+    "pylint": {
+      "executor": "nx:run-commands",
+      "inputs": ["python", "^python"],
+      "options": {
+        "command": "uv tool run --from uv==0.13.1 uv run --frozen --no-sync --project ../../.. poe pylint",
+        "cwd": "packages/python/core"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "inputs": ["python", "^python"],
+      "options": {
+        "command": "uv tool run --from uv==0.13.1 uv run --frozen --no-sync --project ../../.. poe test",
+        "cwd": "packages/python/core"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "inputs": ["python", "^python"],
+      "options": {
+        "command": "uv tool run --from uv==0.13.1 uv run --frozen --no-sync --project ../../.. poe type-check",
+        "cwd": "packages/python/core"
+      }
+    }
+  }
+}

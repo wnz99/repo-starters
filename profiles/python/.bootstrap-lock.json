@@ -1,0 +1,61 @@
+{
+  "baseline": "wnz-repo-v1",
+  "dependencies": {
+    "pyproject.toml": {
+      "basedpyright": "1.40.1",
+      "clean-code-tools-python": "1.0.7",
+      "deptry": "0.25.1",
+      "hatchling": "1.32.4",
+      "packaging": "26.3",
+      "poethepoet": "0.48.0",
+      "pydantic": "2.13.5",
+      "pylint": "4.0.8",
+      "pytest": "9.1.1",
+      "ruff": "0.16.8",
+      "shellcheck-py": "0.11.0.1"
+    }
+  },
+  "files": {
+    ".bootstrap.json": "cd4faf3852be9826aac703c64a29af265dfdbd243b7fa388ffd3fae6578c7507",
+    ".editorconfig": "71589501b7a5dd84d122c08a34d94001034ec89843a90e2e790a65087c8a4fcc",
+    ".gitattributes": "d60f352d0db1404c70afb4bb8b2ca3fd1c610572aa40720e8a0b7baa7885418c",
+    ".githooks/pre-commit": "227bdc6f376527439ac64313a626b135bdbb3737292b6e6cc887b864c52535d3",
+    ".githooks/pre-push": "c1187abe064e88f5009a4d1cb18f2545a0e831894ec4b6108f4b1cf9be772d9e",
+    ".github/workflows/check.yml": "06b8252983c385ada1a57411bd3389474a87fd1611bcadf2770f21be7bcd960c",
+    ".gitignore": "2a1986496b6518dbbf4d01316e9311053c4e910964fbbcaebcad17949dbf0fff",
+    ".python-version": "5abd4dc1efa09469b88916c8e4e027a8c266a9b6d06f43ac9da3e30cd00b4ab5",
+    "AGENTS.md": "9e626ac87e93eb0d9b37bac66ac13176bfe57a6ef200ebe287c129d715fe45ac",
+    "LICENSE": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499",
+    "POLISH.md": "84d62dc75fd2a295fc596e7f8fb8d9ce0b43cc9e8526e9bea4595a2c8bd7fb56",
+    "README.md": "8bf5d89e4e11b2718a40634d36bbd00f585a2dac11ef558ce13688df5328dbad",
+    "docs/README.md": "6bcc4774353548c96d715ac51d00f8b9b6ac4768cbb36417fe3a22c0e420de36",
+    "docs/development.md": "fc7ebc5698bb585409d0f3687337786cc2c0d00395dccdc14ca5a4c66078b6ea",
+    "docs/index.md": "dd9585df919a7e00433487016ef767d5c01318be70416f13a0993c011b7e4ec6",
+    "pyproject.toml": "99f025a598b5d548820da633d44b6e9da5212874bc0855d5256f3b9c852288a0",
+    "pyrightconfig.json": "3094457935cd9d039c5c484d377e4062cd2f04f7e66346536c62fa55926e4671",
+    "pyrightconfig.tools.json": "4ab5fbb5212a6989cce91661ce0d18792bbcc0c3f518c15c8f1fee3e5761ea65",
+    "quality/basedpyright.json": "5e06fe8d2c32813893cfccbf4c570c221ca6a7c9da6488348a5c899bc969082e",
+    "quality/pyproject.toml": "6ef0db4cd614c1801da340b3ada6740e1bf84a484021f07b32968e9c06bef889",
+    "src/starter_python/__init__.py": "c22cd76164ad5ab4fdee569b0e84e8d9d9b44b6f60d9dd34aa4f9c00b74fb0f1",
+    "tests/test_name.py": "74abdb87718604e71ffadd540970b58f36d0716f82eda029f13a7f2bed46d241",
+    "tools/quality/check-static.sh": "6dd3210868aa0beabf9374fd9557d4dbf0d287bfc07da876c2dd9be112d1ac52",
+    "tools/quality/check-versions.sh": "cd5bf8ab26491498f50406269b73eff023b2f525b8c409c9ec7a896988b08f13",
+    "tools/quality/check.sh": "3d3b1d3ede80bfde245b855a0e519d2269d0a04657fdae2fe4410b4dfd828a41",
+    "tools/quality/format-index.sh": "b329d5d237a9fdf77d540c4eb5025a08560c3d6a5c0326a8110bd0e85650aee8",
+    "tools/quality/hooks.sh": "f7b3471392c111c1cc0d68360182088726979455856c433508fb55c4dccfefd6",
+    "tools/quality/install-hooks.sh": "a16a8f155a27f5e491c7ec47547d8c3a14b413766032d3e4bb5f64932de27acd",
+    "tools/quality/isolate_python.py": "81ecfcb562a051eaacee28f630af5e4366a881a84a82b5db6ce22f38ce550157",
+    "tools/quality/isolation_models.py": "ef6c9b61eb136de6503a500171a8830d409ecda4b5689923e5a74dcb7a5946a0",
+    "tools/quality/setup.sh": "1f6945e5a05a7bfbd93b78609919175642d4bcea588251075559af66ac0c688e",
+    "uv.lock": "1ac846c087556b05a2a98709db19ea52691d79fee6315de968dd5719403a9ba9"
+  },
+  "runtimes": {
+    "bun": null,
+    "node": null,
+    "nodeTypes": null,
+    "python": "3.14.8",
+    "uv": "0.13.1"
+  },
+  "skills": {},
+  "specificationSha256": "a19b15037477cb40a59f71cff06c57d1fa84e19f7e79ac8f2bda29ece9bf5b2c"
+}

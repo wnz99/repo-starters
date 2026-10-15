@@ -1,0 +1,28 @@
+{
+  "devDependencies": {},
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "name": "starter-typescript",
+  "packageManager": "bun@1.3.13",
+  "private": true,
+  "scripts": {
+    "build": "bun build src/index.ts --target bun --outdir dist --sourcemap=external --packages external && tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "check": "bun run format-check && bun run build && bun run lint && bun run typecheck && bun run test && bun run dependency-isolation",
+    "dependency-isolation": "bun ../../../tools/quality/isolate-typescript.mjs typescript-core",
+    "fix": "eslint src tests --fix",
+    "format": "prettier --write --ignore-unknown src tests",
+    "format-check": "prettier --check --ignore-unknown src tests",
+    "lint": "eslint src tests --max-warnings 0",
+    "test": "bun test ./tests",
+    "typecheck": "tsc --project tsconfig.json --noEmit && tsc --project tests/tsconfig.json --noEmit"
+  },
+  "type": "module",
+  "version": "0.1.0"
+}

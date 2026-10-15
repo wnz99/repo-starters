@@ -1,0 +1,5 @@
+{
+  "extends": "./quality/basedpyright.json",
+  "extraPaths": ["tools/quality"],
+  "include": ["tools/quality/**/*.py"]
+}

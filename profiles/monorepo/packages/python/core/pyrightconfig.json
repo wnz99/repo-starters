@@ -1,0 +1,4 @@
+{
+  "extends": "../../../quality/basedpyright.json",
+  "include": ["src", "tests"]
+}

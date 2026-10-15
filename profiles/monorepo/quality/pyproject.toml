@@ -1,0 +1,65 @@
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+fix = false
+extend-exclude = [".venv", "node_modules", "dist", "build", "coverage", ".agents"]
+
+[tool.ruff.lint]
+select = [
+  "A", "ARG", "ASYNC", "B", "C4", "C90", "DTZ", "E", "ERA", "F", "FBT",
+  "FLY", "FURB", "I", "ICN", "ISC", "N", "PERF", "PGH", "PIE", "PL", "PT",
+  "PTH", "RET", "RSE", "RUF", "S", "SIM", "SLOT", "T10", "T20", "TC", "TRY", "UP", "W"
+]
+ignore = ["E501", "ISC001"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.isort]
+known-first-party = ["isolation_models", "starter_python"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**/*.py" = ["PLR2004", "S101", "S603"]
+
+[tool.ruff.format]
+docstring-code-format = true
+line-ending = "lf"
+
+[tool.pylint.main]
+py-version = "3.14"
+recursive = true
+load-plugins = ["clean_code_tools_pylint"]
+
+[tool.pylint."messages control"]
+disable = ["missing-class-docstring", "missing-function-docstring", "missing-module-docstring", "too-few-public-methods"]
+enable = [
+  "clean-code-boolean-flag-argument", "clean-code-business-policy-literal",
+  "clean-code-commented-out-code", "clean-code-noisy-comment",
+  "clean-code-output-argument-mutation", "clean-code-redundant-comment",
+  "clean-code-todo-format", "clean-code-train-wreck"
+]
+
+[tool.pylint.design]
+max-args = 5
+max-attributes = 7
+max-bool-expr = 5
+max-branches = 12
+max-locals = 15
+max-nested-blocks = 4
+max-public-methods = 12
+max-returns = 6
+max-statements = 40
+max-parents = 7
+
+[tool.pylint.format]
+max-line-length = 100
+max-module-lines = 300
+
+[tool.pylint.reports]
+score = false
+
+[tool.pytest.ini_options]
+addopts = ["-ra", "--strict-config", "--strict-markers", "--import-mode=importlib"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]

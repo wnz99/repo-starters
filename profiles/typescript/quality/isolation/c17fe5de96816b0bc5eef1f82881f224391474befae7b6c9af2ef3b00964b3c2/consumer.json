@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "lock": "{\n  \"lockfileVersion\": 1,\n  \"configVersion\": 1,\n  \"workspaces\": {\n    \"\": {\n      \"name\": \"bootstrap-isolated-consumer\",\n      \"dependencies\": {\n        \"starter-typescript\": \"file:./artifacts/package-0.tgz\",\n      },\n    },\n  },\n  \"overrides\": {\n    \"starter-typescript\": \"file:./artifacts/package-0.tgz\",\n  },\n  \"packages\": {\n    \"starter-typescript\": [\"starter-typescript@./artifacts/package-0.tgz\", {}, \"sha512-8QFJgPt2inPzwaRitM87sGS5c57RJAmdaNFxiWx/WiMDUmY6vF+MztjakFv0lY+KsAgT3HUrbcVFWUtIhpzKNg==\"],\n  }\n}\n",
+  "manifests": {
+    "starter-typescript": {
+      "bin": null,
+      "cpu": null,
+      "dependencies": {},
+      "isolationScript": null,
+      "optionalDependencies": {},
+      "os": null,
+      "peerDependencies": {},
+      "peerDependenciesMeta": {},
+      "version": "0.1.0"
+    }
+  }
+}

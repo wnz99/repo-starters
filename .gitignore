@@ -1,0 +1,16 @@
+.DS_Store
+.env
+.env.*
+node_modules/
+.venv/
+.nx/
+dist/
+build/
+coverage/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.serena/
+.agent-local.json
+.mcp.json
+.fallow/

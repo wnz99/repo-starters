@@ -1,0 +1,28 @@
+[project]
+name = "starter-workspace"
+version = "0.1.0"
+requires-python = ">=3.14"
+
+[dependency-groups]
+dev = ["basedpyright==1.40.1", "clean-code-tools-python==1.0.7", "deptry==0.25.1", "packaging==26.3", "poethepoet==0.48.0", "pylint==4.0.8", "pytest==9.1.1", "pydantic==2.13.5", "ruff==0.16.8", "shellcheck-py==0.11.0.1"]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["packages/python/core"]
+
+[tool.poe.executor]
+type = "simple"
+
+[tool.poe.tasks]
+versions = "sh tools/quality/check-versions.sh"
+hygiene = "sh tools/quality/hooks.sh hygiene"
+helpers-format = "ruff format --check --config quality/pyproject.toml tools/quality"
+helpers-lint = "ruff check --no-fix --config quality/pyproject.toml tools/quality"
+helpers-types = "basedpyright --project pyrightconfig.tools.json"
+helpers-pylint = "pylint --rcfile quality/pyproject.toml tools/quality"
+helpers-deps = "deptry tools/quality --config pyproject.toml --known-first-party isolation_models --ignore DEP002,DEP004 --no-ansi"
+helpers = ["helpers-format", "helpers-lint", "helpers-types", "helpers-pylint", "helpers-deps"]
+shellcheck = "uv tool run --from uv==0.13.1 uv tool run --from shellcheck-py==0.11.0.1 shellcheck .githooks/pre-commit .githooks/pre-push tools/quality/check-static.sh tools/quality/check-versions.sh tools/quality/check.sh tools/quality/format-index.sh tools/quality/hooks.sh tools/quality/install-hooks.sh tools/quality/setup.sh"
+hooks-install = "sh tools/quality/install-hooks.sh"

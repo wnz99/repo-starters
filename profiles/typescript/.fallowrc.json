@@ -1,0 +1,7 @@
+{
+  "duplicates": {
+    "threshold": 1
+  },
+  "entry": ["src/index.ts", "tests/**/*.test.ts", "eslint.config.mjs", "tools/quality/*.mjs"],
+  "ignorePatterns": ["**/dist/**", "**/node_modules/**", "**/.venv/**", "**/.nx/**"]
+}

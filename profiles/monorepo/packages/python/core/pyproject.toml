@@ -1,0 +1,40 @@
+[project]
+name = "starter-python"
+version = "0.1.0"
+description = "Small typed input boundary to replace with project code"
+requires-python = ">=3.14"
+dependencies = ["pydantic==2.13.5"]
+
+[dependency-groups]
+test = ["pytest==9.1.1"]
+
+[build-system]
+requires = ["hatchling==1.32.4"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/starter_python"]
+
+[tool.ruff]
+extend = "../../../quality/pyproject.toml"
+
+[tool.poe.executor]
+type = "simple"
+
+[tool.poe.tasks]
+format = "ruff format --config ../../../quality/pyproject.toml src tests"
+format-check = "ruff format --check --config ../../../quality/pyproject.toml src tests"
+lint = "ruff check --no-fix --config ../../../quality/pyproject.toml src tests"
+fix = "ruff check --fix --config ../../../quality/pyproject.toml src tests"
+type-check = "basedpyright --project pyrightconfig.json"
+deptry = "deptry src --config pyproject.toml --no-ansi"
+test = "pytest -c ../../../quality/pyproject.toml --rootdir . tests"
+build = "uv build --no-sources --out-dir dist"
+dependency-isolation = "python ../../../tools/quality/isolate_python.py python-core"
+check = ["format-check", "lint", "type-check", "pylint", "deptry", "test", "build", "dependency-isolation"]
+
+[[tool.poe.tasks.pylint]]
+cmd = "pylint --rcfile ../../../quality/pyproject.toml src"
+
+[[tool.poe.tasks.pylint]]
+cmd = "pylint --rcfile ../../../quality/pyproject.toml --disable=clean-code-business-policy-literal tests"

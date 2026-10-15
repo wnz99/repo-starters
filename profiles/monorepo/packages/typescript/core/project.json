@@ -1,0 +1,66 @@
+{
+  "implicitDependencies": [],
+  "name": "typescript-core",
+  "tags": ["type:library", "language:typescript", "scope:typescript-core", "deployable:false"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "inputs": ["typescript", "^typescript"],
+      "options": {
+        "command": "bun run build",
+        "cwd": "packages/typescript/core"
+      }
+    },
+    "check": {
+      "executor": "nx:run-commands",
+      "inputs": ["typescript", "^typescript"],
+      "options": {
+        "command": "bun run check",
+        "cwd": "packages/typescript/core"
+      }
+    },
+    "dependency-isolation": {
+      "executor": "nx:run-commands",
+      "inputs": ["typescript", "^typescript"],
+      "options": {
+        "command": "bun run dependency-isolation",
+        "cwd": "packages/typescript/core"
+      }
+    },
+    "format-check": {
+      "executor": "nx:run-commands",
+      "inputs": ["typescript", "^typescript"],
+      "options": {
+        "command": "bun run format-check",
+        "cwd": "packages/typescript/core"
+      }
+    },
+    "lint": {
+      "dependsOn": ["build", "^build"],
+      "executor": "nx:run-commands",
+      "inputs": ["typescript", "^typescript"],
+      "options": {
+        "command": "bun run lint",
+        "cwd": "packages/typescript/core"
+      }
+    },
+    "test": {
+      "dependsOn": ["build", "^build"],
+      "executor": "nx:run-commands",
+      "inputs": ["typescript", "^typescript"],
+      "options": {
+        "command": "bun run test",
+        "cwd": "packages/typescript/core"
+      }
+    },
+    "typecheck": {
+      "dependsOn": ["build", "^build"],
+      "executor": "nx:run-commands",
+      "inputs": ["typescript", "^typescript"],
+      "options": {
+        "command": "bun run typecheck",
+        "cwd": "packages/typescript/core"
+      }
+    }
+  }
+}

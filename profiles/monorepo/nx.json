@@ -1,0 +1,54 @@
+{
+  "analytics": false,
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*",
+      "!{projectRoot}/node_modules/**/*",
+      "!{projectRoot}/.venv/**/*",
+      "!{projectRoot}/.nx/**/*",
+      "!{projectRoot}/dist/**/*",
+      "!{projectRoot}/build/**/*",
+      "!{projectRoot}/coverage/**/*",
+      "!{projectRoot}/**/__pycache__/**/*",
+      "!{projectRoot}/**/.pytest_cache/**/*",
+      "!{projectRoot}/**/.ruff_cache/**/*",
+      "{workspaceRoot}/.bootstrap.json",
+      "{workspaceRoot}/nx.json",
+      { "runtime": "node --version" },
+      { "runtime": "bun --version" }
+    ],
+    "python": [
+      "default",
+      "{workspaceRoot}/uv.lock",
+      "{workspaceRoot}/pyproject.toml",
+      "{workspaceRoot}/.python-version",
+      "{workspaceRoot}/quality/pyproject.toml",
+      "{workspaceRoot}/quality/basedpyright.json",
+      { "runtime": "uv tool run --from uv==0.13.1 uv --version" },
+      { "runtime": "uv tool run --from uv==0.13.1 uv run --frozen --no-sync python --version" }
+    ],
+    "typescript": [
+      "default",
+      "{workspaceRoot}/bun.lock",
+      "{workspaceRoot}/package.json",
+      "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/eslint.config.mjs",
+      "{workspaceRoot}/.prettierrc.json",
+      "{workspaceRoot}/.prettierignore",
+      "{workspaceRoot}/quality/isolation/**/*"
+    ]
+  },
+  "targetDefaults": {
+    "format-check": { "cache": true },
+    "lint": { "cache": true, "dependsOn": ["^build"] },
+    "typecheck": { "cache": true, "dependsOn": ["^build"] },
+    "pylint": { "cache": true },
+    "deptry": { "cache": true },
+    "build": { "cache": true, "dependsOn": ["^build"], "outputs": ["{projectRoot}/dist"] },
+    "test": { "cache": false, "dependsOn": ["^build"] },
+    "check": { "cache": false, "dependsOn": ["^build"] },
+    "dependency-isolation": { "cache": false },
+    "format": { "cache": false },
+    "fix": { "cache": false }
+  }
+}
