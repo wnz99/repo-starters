@@ -25,7 +25,7 @@ The starter contains working baseline files; project choices and optional integr
 
 ## Acquisition sources
 
-Tool pins are in the manifests and lockfiles. Installation/source links for every package and optional integration: https://llms.wnz.sh/docs/quality-baseline-v1#tool-and-skill-acquisition-sources . Runtime installation: [uv](https://docs.astral.sh/uv/getting-started/installation/), [Python](https://www.python.org/downloads/), [Bun](https://bun.sh/docs/installation), [Node](https://nodejs.org/en/download), [Git](https://git-scm.com/downloads).
+Tool pins are in the manifests and lockfiles. Installation/source links for every package and optional integration: https://llms.wnz.sh/docs/quality-baseline-v1 . Runtime installation: [uv](https://docs.astral.sh/uv/getting-started/installation/), [Python](https://www.python.org/downloads/), [Bun](https://bun.sh/docs/installation), [Node](https://nodejs.org/en/download), [Git](https://git-scm.com/downloads).
 
 Skills (copy the complete linked directory and upstream licensing):
 - [wnz-doc-write-expert](https://github.com/wnz99/llm-dev-skills/tree/1e6b0d8cc149ee26729319bc109414ca7d77145b/skills/wnz-doc-write-expert)

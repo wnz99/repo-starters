@@ -2,7 +2,7 @@
 
 Copy this directory as the root of your project. Replace the tiny input-validation smoke fixtures with your project code through [POLISH.md](POLISH.md).
 
-Prerequisites: Git, uv 0.13.1, Bun 1.3.13 and Node 24.19.0. Python components use Python 3.14.8; uv selects/downloads it during setup. [Acquisition sources](https://llms.wnz.sh/docs/quality-baseline-v1#tool-and-skill-acquisition-sources).
+Prerequisites: Git, uv 0.13.1, Bun 1.3.13 and Node 24.19.0. Python components use Python 3.14.8; uv selects/downloads it during setup. [Acquisition sources](https://llms.wnz.sh/docs/quality-baseline-v1).
 
 ```sh
 git init
