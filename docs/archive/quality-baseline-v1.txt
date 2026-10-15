@@ -1,0 +1,789 @@
+---
+type: Specification
+title: Repository quality baseline v1
+description: Fixed tool versions, configuration starters, command wiring, and acceptance checks for the repository bootstrap prompt.
+baseline_version: "1"
+---
+
+# Repository quality baseline v1
+
+Use the working [public starter files](https://github.com/wnz99/repo-starters) with the short [adaptation prompt](python-typescript-bootstrap.md) for ordinary setup. This specification preserves the detailed v1 policy, acquisition sources and acceptance checklist. It also supports an explicitly chosen from-scratch setup; in that mode supply this full specification and its helper assets. When copying a starter, its recorded revision, manifests, native commands and documented runtime adaptations own the concrete files; do not reconstruct or overwrite them mechanically from these configuration examples.
+
+## Determinism and inputs
+
+Use baseline ID `wnz-repo-v1`. Copy the applicable configuration blocks, replacing only explicitly named parameters. Missing information is a pending input, not permission to invent another preset. Existing repositories get a documented mapping to their current owners; conflicting existing requirements need an explicit decision before migration.
+
+Resolve these inputs before creating dependent configuration:
+
+| Input | Resolution rule |
+| --- | --- |
+| Profile | `python-single`, `typescript-single`, or `monorepo`; supplied by the user. |
+| Component inventory | Explicit unique name, relative path, language, artifact kind (`library` or `application`), and real entry points. Single repositories use path `.`; new monorepos use `apps/<name>` or the language-specific `packages/` paths from the prompt. |
+| Python | Exact patch version supplied for the project, at least 3.12; derive minor-version configuration from it. Do not silently upgrade an existing supported version. |
+| TypeScript target | `bun`, `node`, or `browser` per component. Bun baseline is 1.3.13. TypeScript tooling and all Nx monorepos also require Node: default 24.19.0, with `@types/node` 24.19.2 for TypeScript. A required existing Node override must supply a compatible exact runtime/type pin; do not confuse the application target with the CLI runtime. |
+| CI | Existing provider, or explicit choice for a new repository. Hosted runners unless self-hosted is selected. Required operating systems are explicit inputs; do not infer Linux verification from macOS. |
+| Features | Per-component `none`, `pending`, or `resolved` state for validation, Python LLM work, and MCP work; MCP client protocol and transport requirements; actual Python provider extras. |
+| Optional integrations | Each has `pending`, `include`, or `exclude` plus the requested details. Pending choices never change local or remote settings. |
+| Skills | Trusted source, immutable commit or installed-content digest, source subdirectory, license, destination, and selected client discovery mechanism for each required skill. No mutable `main` source or unverified download counts as a pinned installation. |
+
+Write the resolved inputs and `baseline: "wnz-repo-v1"` to root `.bootstrap.json`. Its component list is the inventory used to generate workspace membership, native commands, Nx projects, and verification. It must contain no credentials. Record option answers there, including the target client and `repository` or `user` scope for Serena and semantic MCP configuration. Represent client config locations with repository-relative or portable home-relative paths, not another workstation's absolute username/path. A user-scope change still needs authorization. Missing executable, authentication, source, or registration permission makes an included feature incomplete; never switch it to excluded silently.
+
+Use these exact top-level keys: `baseline`, `profile`, `purpose`, `license`, `documentationLanguage`, `runtimes`, `components`, `ci`, `options`, and `skills`. License is the supplied SPDX identifier or `pending`; never inherit this prompt's CC0 license. Create the project's LICENSE file only after its choice resolves. Documentation language is explicit; ask when unknown. `runtimes` has `python`, `uv`, `bun`, `node`, and `nodeTypes`, each an exact version string or null when unused. uv is also needed for isolated ShellCheck tooling in TypeScript-only repositories that contain shell hooks.
+
+Each component has `name`, `path`, `language`, `target` (`bun`, `node`, `browser`, or null for Python), `artifact`, `importPackage` (Python only; otherwise null), `testDependencies`, `validation`, `entrypoints`, `runtimeDependencies` (names of components reached through runtime contracts), `llm`, and `mcp`. TypeScript `testDependencies` is an explicit map of actual test-harness packages to their declared versions, also present in the component's devDependencies; it excludes root quality tooling. It defaults to `{}` for Bun's built-in runner. Python uses its manifest's `test` dependency group and records null here. Feature objects always have `state: "none" | "pending" | "resolved"` and the user's `answer` (text or null). `llm` additionally has `providers` (objects with `name` and provider `extras`); `mcp` additionally has `protocol`, `transport`, and `clients`, nullable while pending. `validation` records whether an external-data boundary requires Pydantic. None means explicitly absent; pending is never serialized as none, an empty provider list, or null. A resolved LLM/MCP feature requires its provider/transport/client details before dependent generation. Independent quality setup can proceed with feature states pending, but complete setup cannot be claimed.
+
+`ci` has `provider`, `operatingSystems`, and `actionRevisions`. `options` has exactly `promotion`, `merge`, `cloud`, `serena`, `semanticMcp`, and `selfHostedCi`, each an object with `state`, `answer`, and `details`. Option states are `pending`, `include`, or `exclude`; answer is the user's text or null. Details are null while unresolved. Each `skills` entry has `name`, `source`, `revision`, `subdirectory`, `license`, `digest`, and `discovery`.
+
+Validate all resolved fields before generation: versions are exact, names and paths unique, paths relative and contained in the repository without `..`, languages/targets/artifacts are from the declared enums, and each included option has its required details. `promotion.details` contains branch/environment names and promotion rules; `merge.details` contains strategy and both cleanup booleans; `cloud.details` contains provider/accounts/projects/credential method/local-versus-CI scope; Serena/semantic details contain client, scope, version/revision, and config location; self-hosted CI details contain host, lifecycle, isolation, and access rules. Pending or excluded options have no generated configuration. An include answer with missing details stays pending. Reject unknown keys instead of silently discarding spelling errors. Sort components by path and skills by name for generated inventories; use two-space JSON indentation and a final newline.
+
+Generate in this order: resolve inputs, render configurations/helpers, initialize language lockfiles and install pinned tools, format generated source/configuration, initialize consumer-isolation lockfiles, verify all gates, then calculate file digests and write `.bootstrap-lock.json` last. Exclude `.bootstrap.json` and `.bootstrap-lock.json` from Prettier and serialize both as two-space JSON with sorted object keys, sorted inventories, and a final newline. Do not format recorded files after hashing without recalculating their digests. Record exact direct dependency versions, tool executable versions, skill revisions/digests, and configuration SHA-256 digests. Keep records in version control when commits are authorized. Do not put transient timestamps in generated configuration. Reuse records and all language/consumer lockfiles on repeat execution. Compare current file digests before overwriting: preserve local edits and resolve differences rather than resetting them.
+
+The lock record has exactly `baseline`, `specificationSha256`, `runtimes`, `dependencies`, `skills`, and `files`. Hash the exact supplied specification bytes as `specificationSha256`; a different specification under the same baseline ID requires an accepted revision before regeneration. `dependencies` maps manifest-relative paths to objects of direct name/version pairs. `skills` maps skill names to immutable revisions and content digests. `files` maps generated repository-relative paths to SHA-256 values, excluding the lock record itself. A skill digest is SHA-256 over sorted relative file paths and their byte digests, excluding caches. Do not include build products or local state. Lock records are refreshed only for explicitly accepted input, baseline, dependency, or generated-content changes.
+
+Fixed configuration and direct tool pins make policy repeatable. Transitive dependency resolution on the first run can still change with registry contents; full dependency replay requires the resulting `uv.lock` and `bun.lock`. Do not claim byte-identical installs across platforms or new lockfile resolutions.
+
+## Tool and skill acquisition sources
+
+Use these official runtime downloads and package-registry pages to obtain the tools named below. The version snapshot remains authoritative: a landing page may show a newer release, which is not an instruction to upgrade. Install packages through the selected uv/Bun workflow and preserve frozen lockfiles. The Python and npm packages named FastMCP and Clean Code Tools have distinct distributions.
+
+| Runtime or prerequisite | Installation source |
+| --- | --- |
+| Python | [Official downloads](https://www.python.org/downloads/); [uv-managed Python installation](https://docs.astral.sh/uv/guides/install-python/) |
+| uv | [Official installation guide](https://docs.astral.sh/uv/getting-started/installation/) |
+| Bun | [Official installation guide](https://bun.sh/docs/installation) |
+| Node.js | [Official downloads](https://nodejs.org/en/download) |
+| Git and its shell | [Official downloads](https://git-scm.com/downloads) |
+
+Every direct package in the snapshot has a registry source:
+
+| Ecosystem | Package and pinned version | Registry source |
+| --- | --- | --- |
+| Python | `basedpyright==1.40.1` | [PyPI](https://pypi.org/project/basedpyright/1.40.1/) |
+| Python | `clean-code-tools-python==1.0.7` | [PyPI](https://pypi.org/project/clean-code-tools-python/1.0.7/) |
+| Python | `deptry==0.25.1` | [PyPI](https://pypi.org/project/deptry/0.25.1/) |
+| Python | `packaging==26.3` | [PyPI](https://pypi.org/project/packaging/26.3/) |
+| Python | `poethepoet==0.48.0` | [PyPI](https://pypi.org/project/poethepoet/0.48.0/) |
+| Python | `pylint==4.0.8` | [PyPI](https://pypi.org/project/pylint/4.0.8/) |
+| Python | `pytest==9.1.1` | [PyPI](https://pypi.org/project/pytest/9.1.1/) |
+| Python | `pydantic==2.13.5` | [PyPI](https://pypi.org/project/pydantic/2.13.5/) |
+| Python | `ruff==0.16.8` | [PyPI](https://pypi.org/project/ruff/0.16.8/) |
+| Python | `shellcheck-py==0.11.0.1` | [PyPI](https://pypi.org/project/shellcheck-py/0.11.0.1/) |
+| Python | `uv==0.13.1` | [PyPI](https://pypi.org/project/uv/0.13.1/) |
+| Python | `hatchling==1.32.4` | [PyPI](https://pypi.org/project/hatchling/1.32.4/) |
+| Python | `pydantic-ai-slim==2.56.0` | [PyPI](https://pypi.org/project/pydantic-ai-slim/2.56.0/) |
+| Python | `fastmcp==4.1.0` | [PyPI](https://pypi.org/project/fastmcp/4.1.0/) |
+| npm | `@eslint/js@10.0.1` | [npm](https://www.npmjs.com/package/@eslint/js/v/10.0.1) |
+| npm | `@types/bun@1.3.13` | [npm](https://www.npmjs.com/package/@types/bun/v/1.3.13) |
+| npm | `@types/node@24.19.2` | [npm](https://www.npmjs.com/package/@types/node/v/24.19.2) |
+| npm | `clean-code-tools@1.0.7` | [npm](https://www.npmjs.com/package/clean-code-tools/v/1.0.7) |
+| npm | `eslint@10.11.0` | [npm](https://www.npmjs.com/package/eslint/v/10.11.0) |
+| npm | `eslint-plugin-sonarjs@4.2.1` | [npm](https://www.npmjs.com/package/eslint-plugin-sonarjs/v/4.2.1) |
+| npm | `eslint-plugin-unicorn@69.0.0` | [npm](https://www.npmjs.com/package/eslint-plugin-unicorn/v/69.0.0) |
+| npm | `fallow@3.27.0` | [npm](https://www.npmjs.com/package/fallow/v/3.27.0) |
+| npm | `globals@17.12.0` | [npm](https://www.npmjs.com/package/globals/v/17.12.0) |
+| npm | `knip@6.37.0` | [npm](https://www.npmjs.com/package/knip/v/6.37.0) |
+| npm | `prettier@3.9.8` | [npm](https://www.npmjs.com/package/prettier/v/3.9.8) |
+| npm | `typescript@6.0.3` | [npm](https://www.npmjs.com/package/typescript/v/6.0.3) |
+| npm | `typescript-eslint@8.70.0` | [npm](https://www.npmjs.com/package/typescript-eslint/v/8.70.0) |
+| npm | `nx@23.2.1` | [npm](https://www.npmjs.com/package/nx/v/23.2.1) |
+| npm | `@nx/eslint-plugin@23.2.1` | [npm](https://www.npmjs.com/package/@nx/eslint-plugin/v/23.2.1) |
+| npm | `fastmcp@4.22.10` | [npm](https://www.npmjs.com/package/fastmcp/v/4.22.10) |
+| npm | `zod@4.6.5` | [npm](https://www.npmjs.com/package/zod/v/4.6.5) |
+
+Skill download locations point to complete directories at the fixed revisions. Preserve their references and upstream licensing when copying them into `.agents/skills/`.
+
+| Skill | Source directory |
+| --- | --- |
+| `wnz-doc-write-expert` | [Pinned skill directory](https://github.com/wnz99/llm-dev-skills/tree/1e6b0d8cc149ee26729319bc109414ca7d77145b/skills/wnz-doc-write-expert) |
+| `wnz-code-reviewer` | [Pinned skill directory](https://github.com/wnz99/llm-dev-skills/tree/1e6b0d8cc149ee26729319bc109414ca7d77145b/skills/wnz-code-reviewer) |
+| `wnz-test-quality` | [Pinned skill directory](https://github.com/wnz99/llm-dev-skills/tree/1e6b0d8cc149ee26729319bc109414ca7d77145b/skills/wnz-test-quality) |
+| `wnz-clean-code-py` | [Pinned skill directory](https://github.com/wnz99/llm-dev-skills/tree/1e6b0d8cc149ee26729319bc109414ca7d77145b/skills/wnz-clean-code-py) |
+| `wnz-clean-code-js` | [Pinned skill directory](https://github.com/wnz99/llm-dev-skills/tree/1e6b0d8cc149ee26729319bc109414ca7d77145b/skills/wnz-clean-code-js) |
+| `clean-code-tools` | [Pinned skill directory](https://github.com/wnz99/clean-code-tools/tree/c51c7aa0a9ad555f81e8096e4a7e1c83f9156c1a/skills/clean-code-tools) |
+| `verify-before-complete` | No verified public URL in the pinned trees. Require a user-supplied trusted repository/download URL or installed copy; record its license, source and content digest. Do not invent an upstream link or report installation complete without the source. |
+
+Optional integrations have their own acquisition sources and still require explicit inclusion: [Serena source](https://github.com/oraios/serena) and [setup guide](https://oraios.github.io/serena/02-usage/020_running.html); [Clean Code semantic MCP source](https://github.com/wnz99/clean-code-tools/tree/c51c7aa0a9ad555f81e8096e4a7e1c83f9156c1a). Their links do not authorize server registration, account changes, or installing an unpinned revision.
+
+## Version snapshot
+
+These are explicit starting pins, not a claim that each is the newest release. Do not resolve `latest` during ordinary bootstrap or replay. A security or compatibility problem blocks the affected pin until a reviewed baseline revision or recorded project exception replaces it. Upgrade the baseline deliberately and rerun its probes.
+
+Python root development group:
+
+```toml
+[dependency-groups]
+dev = [
+  "basedpyright==1.40.1",
+  "clean-code-tools-python==1.0.7",
+  "deptry==0.25.1",
+  "packaging==26.3",
+  "poethepoet==0.48.0",
+  "pylint==4.0.8",
+  "pytest==9.1.1",
+  "pydantic==2.13.5",
+  "ruff==0.16.8",
+  "shellcheck-py==0.11.0.1",
+]
+```
+
+Use `uv==0.13.1` as the tool executable for this baseline. Always use the unconditional pinned launcher defined below for installation, lockfile commands, and generated external entrypoints; never upgrade a global installation implicitly. For Python buildable components, use `hatchling==1.32.4` as the build requirement and `hatchling.build` as the backend. Components declare `pytest==9.1.1` in their own `test` dependency group so isolated test dependencies are explicit and separate from root quality tools.
+
+TypeScript root `devDependencies`:
+
+```json
+{
+  "@eslint/js": "10.0.1",
+  "@types/bun": "1.3.13",
+  "@types/node": "24.19.2",
+  "clean-code-tools": "1.0.7",
+  "eslint": "10.11.0",
+  "eslint-plugin-sonarjs": "4.2.1",
+  "eslint-plugin-unicorn": "69.0.0",
+  "fallow": "3.27.0",
+  "globals": "17.12.0",
+  "knip": "6.37.0",
+  "prettier": "3.9.8",
+  "typescript": "6.0.3",
+  "typescript-eslint": "8.70.0"
+}
+```
+
+Set `packageManager` to `bun@1.3.13` and `type` to `module`. For any monorepo add root `nx: 23.2.1`; add `@nx/eslint-plugin: 23.2.1` when TypeScript components exist. A Python-only monorepo needs Bun, Node, Nx, and Prettier, but does not need the TypeScript lint stack. Node is a tooling prerequisite even when application source uses Python or Bun. Do not add Bun runtime globals or types to Node/browser source just because Bun manages dependencies or runs tests. Browser production still uses `types: []`; tests and tooling may need Node types.
+
+All displayed leading `uv` commands mean the pinned launcher. Always generate external root entrypoints, hooks, CI, and Nx Python commands with the exact prefix `uv tool run --from uv==0.13.1 uv` instead of leading `uv`, regardless of the host version. Its child tool environment supplies the pinned executable to native Poe/helper commands. The launcher check proves that the pinned tool is available; it does not assert equality of the host bootstrap executable. Generated command text never depends on the generating machine. Install/select the exact Bun and Node runtimes using the project's existing manager or an isolated official distribution; do not change global runtimes without authorization.
+
+Default skill sources are [the public development-skills repository](https://github.com/wnz99/llm-dev-skills/tree/1e6b0d8cc149ee26729319bc109414ca7d77145b) at commit `1e6b0d8cc149ee26729319bc109414ca7d77145b` for its named `skills/<name>/` directories, and [the public Clean Code Tools repository](https://github.com/wnz99/clean-code-tools/tree/c51c7aa0a9ad555f81e8096e4a7e1c83f9156c1a) at commit `c51c7aa0a9ad555f81e8096e4a7e1c83f9156c1a` for `skills/clean-code-tools/`. These pinned trees were inspected for the named paths. Copy the complete selected skill directory with its references and upstream license/attribution; do not assign this document's CC0 license to it. `verify-before-complete` is not in that shared upstream tree: obtain it from the supplied trusted installed-skill location and lock its content digest, or request a trusted source. Do not fabricate a successful installation when it is absent. No skill's optional runtime or account-wide setup is implied by copying its instruction directory.
+
+Feature dependencies belong to the component's runtime manifest, not the root tooling group:
+
+| Feature | Dependency pin |
+| --- | --- |
+| Python external-data validation | `pydantic==2.13.5` |
+| Python LLM implementation | `pydantic-ai-slim==2.56.0` with the explicitly selected provider extras; import API is `pydantic_ai`. |
+| Python MCP server | Python `fastmcp==4.1.0`. |
+| TypeScript MCP server | npm `fastmcp: 4.22.10` and `zod: 4.6.5`; use Zod for its tool schemas. |
+
+FastMCP implementations are separate projects. Before accepting a feature pin, run the client's required discovery/tool-call contract against it. A protocol mismatch is a blocker or an explicit version exception, not permission to change frameworks or protocol requirements. Do not import another repository's dependency patches automatically. Bun runtime/type pins intentionally share version 1.3.13; do not advance one without compatibility verification of the other.
+
+## Shared files
+
+Create `.editorconfig` with UTF-8, LF, a final newline, trimmed trailing whitespace, two-space indentation, and four spaces for `*.py`. Keep Markdown trailing spaces only when required for intentional hard line breaks. Root `.prettierrc.json`, for repositories using Bun tooling:
+
+```json
+{
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": false,
+  "trailingComma": "all",
+  "endOfLine": "lf"
+}
+```
+
+Ignore `.venv/`, `node_modules/`, `.nx/`, `dist/`, `build/`, `coverage/`, Python caches, `.env` and `.env.*` except `.env.example`, root `/.agent-local.json`, `.serena/`, and local agent-client state. Ignore root `.mcp.json` when it contains only local registrations. When an explicitly selected repository-scoped integration uses that path, permit its secret-free registration to be versioned; use external environment references for credentials. Do not claim unsupported client environment interpolation works. If the client cannot keep secrets external in project scope, report that option incomplete and request a supported scope/method. `.agents/skills/`, bootstrap records, consumer-isolation lockfiles, and language lockfiles remain versioned. Prettier excludes generated/dependency/cache trees, both bootstrap records, and downloaded skill content; upstream skill text is not reformatted.
+
+Use this root `.prettierignore` starter wherever Bun tooling exists. The consumer record and language lockfiles have their own deterministic writers and are not reformatted:
+
+```text
+**/node_modules/
+**/.venv/
+**/.nx/
+**/dist/
+**/build/
+**/coverage/
+**/__pycache__/
+.agents/
+.serena/
+.agent-local.json
+.bootstrap.json
+.bootstrap-lock.json
+bun.lock
+uv.lock
+quality/isolation/**/consumer.json
+```
+
+## Python policy and native wiring
+
+Use one root `quality/pyproject.toml` for Ruff, Pylint, and pytest. Explicit CLI configuration wins over component discovery. Components must not independently redefine these tools. Approved exceptions are sparse reviewed changes to the canonical file, scoped by path where the tool supports it. Do not synthesize a generic TOML-merging script.
+
+### `quality/pyproject.toml`
+
+Replace `{{PYTHON_MINOR}}` with e.g. `3.12`, and `{{RUFF_TARGET}}` with e.g. `py312`, from the exact Python input.
+
+```toml
+[tool.ruff]
+target-version = "{{RUFF_TARGET}}"
+line-length = 100
+fix = false
+extend-exclude = [".venv", "node_modules", "dist", "build", "coverage", ".agents"]
+
+[tool.ruff.lint]
+select = [
+  "A", "ARG", "ASYNC", "B", "C4", "C90", "DTZ", "E", "ERA", "F", "FBT",
+  "FLY", "FURB", "I", "ICN", "ISC", "N", "PERF", "PGH", "PIE", "PL", "PT",
+  "PTH", "RET", "RSE", "RUF", "S", "SIM", "SLOT", "T10", "T20", "TC", "TRY", "UP", "W"
+]
+ignore = ["E501", "ISC001"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.isort]
+known-first-party = ["isolation_models"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**/*.py" = ["PLR2004", "S101", "S603"]
+
+[tool.ruff.format]
+docstring-code-format = true
+line-ending = "lf"
+
+[tool.pylint.main]
+py-version = "{{PYTHON_MINOR}}"
+recursive = true
+load-plugins = ["clean_code_tools_pylint"]
+
+[tool.pylint."messages control"]
+disable = ["missing-class-docstring", "missing-function-docstring", "missing-module-docstring", "too-few-public-methods"]
+enable = [
+  "clean-code-boolean-flag-argument", "clean-code-business-policy-literal",
+  "clean-code-commented-out-code", "clean-code-noisy-comment",
+  "clean-code-output-argument-mutation", "clean-code-redundant-comment",
+  "clean-code-todo-format", "clean-code-train-wreck"
+]
+
+[tool.pylint.design]
+max-args = 5
+max-attributes = 7
+max-bool-expr = 5
+max-branches = 12
+max-locals = 15
+max-nested-blocks = 4
+max-public-methods = 12
+max-returns = 6
+max-statements = 40
+max-parents = 7
+
+[tool.pylint.format]
+max-line-length = 100
+max-module-lines = 300
+
+[tool.pylint.reports]
+score = false
+
+[tool.pytest.ini_options]
+addopts = ["-ra", "--strict-config", "--strict-markers", "--import-mode=importlib"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+```
+
+### `quality/basedpyright.json`
+
+```json
+{
+  "pythonVersion": "{{PYTHON_MINOR}}",
+  "typeCheckingMode": "strict",
+  "exclude": ["**/.venv", "**/__pycache__", "**/dist", "**/build", "**/node_modules"]
+}
+```
+
+Each Python component has `pyrightconfig.json`:
+
+```json
+{
+  "extends": "{{ROOT_FROM_COMPONENT}}/quality/basedpyright.json",
+  "include": ["src", "tests"]
+}
+```
+
+`{{ROOT_FROM_COMPONENT}}` is `.` for a single repository or the computed relative path from the component to the root. Quote paths as needed in command strings. Extend this include list explicitly when maintained scripts exist; give root-owned Python tools their own configuration and target. Do not silently exclude scripts or tests to obtain a clean check.
+
+Append the sorted unique top-level Python import package names from the inventory to Ruff's `known-first-party` list; retain `isolation_models` for the root helper. This is an input-derived name list, not a choice of policy. Do not put working-directory-dependent source globs in the shared configuration: Ruff CLI and editor discovery can interpret relative paths differently.
+
+Root Python helpers use `pyrightconfig.tools.json` extending `./quality/basedpyright.json`, with `include: ["tools/quality/**/*.py"]` and `extraPaths: ["tools/quality"]`. Root full/static checks run `basedpyright --project pyrightconfig.tools.json`, root Ruff format/lint over `tools/quality`, and `pylint --rcfile quality/pyproject.toml tools/quality`. Root helper dependency checking is `deptry tools/quality --config pyproject.toml --known-first-party isolation_models --ignore DEP002,DEP004 --no-ansi`: helpers intentionally import root dev dependencies and do not consume every application runtime dependency. These two ignores apply only to the tooling scan; component `src` scans keep every default dependency rule.
+
+### Component `pyproject.toml` tool blocks
+
+Merge these blocks into the component's real PEP 621 manifest. Declare the actual distribution/import name, `requires-python`, runtime dependencies, and Hatch wheel package path. Do not infer an import path by blindly replacing hyphens; store it in the component inventory. In a workspace the root has `[tool.uv] package = false`, explicit member paths, and the root tool development group. Workspace dependency sources are explicit per internal dependency.
+
+```toml
+[tool.poe]
+executor = { type = "simple" }
+
+[tool.poe.tasks]
+format = "ruff format --config {{ROOT_FROM_COMPONENT}}/quality/pyproject.toml src tests"
+format-check = "ruff format --check --config {{ROOT_FROM_COMPONENT}}/quality/pyproject.toml src tests"
+lint = "ruff check --no-fix --config {{ROOT_FROM_COMPONENT}}/quality/pyproject.toml src tests"
+fix = "ruff check --fix --config {{ROOT_FROM_COMPONENT}}/quality/pyproject.toml src tests"
+type-check = "basedpyright --project pyrightconfig.json"
+pylint = [
+  { cmd = "pylint --rcfile {{ROOT_FROM_COMPONENT}}/quality/pyproject.toml src" },
+  { cmd = "pylint --rcfile {{ROOT_FROM_COMPONENT}}/quality/pyproject.toml --disable=clean-code-business-policy-literal tests" },
+]
+deptry = "deptry src --config pyproject.toml --no-ansi"
+test = "pytest -c {{ROOT_FROM_COMPONENT}}/quality/pyproject.toml --rootdir . tests"
+build = "uv build --no-sources --out-dir dist"
+dependency-isolation = "python {{ROOT_FROM_COMPONENT}}/tools/quality/isolate_python.py {{COMPONENT_NAME}}"
+check = ["format-check", "lint", "type-check", "pylint", "deptry", "test", "build", "dependency-isolation"]
+```
+
+The test-only Pylint override permits numeric fixtures and expected values; it does not disable the rule for runtime source. All other root Pylint policy still applies to tests. Deptry does not inherit a root dependency manifest. It must read the checked component's own `pyproject.toml` and scan its `src`. Keep all default dependency rules enabled, with no blanket ignores and no `[tool.deptry]` override by default. Runtime-only scans avoid treating pytest imports as production dependencies; test dependency correctness is additionally checked by isolated test execution. If import/distribution names differ, add only the necessary `package_module_name_map` entry to that component and record it.
+
+Run quality tools from the root-owned environment, with the component as working directory: `uv tool run --from uv==0.13.1 uv run --frozen --no-sync --project {{ROOT_FROM_COMPONENT}} poe check` from the component directory. For Nx, use that exact command with `options.cwd` equal to the component path; do not add `-C` or an absolute checkout path. Install beforehand with `uv sync --frozen --all-packages --all-groups` for workspaces, or `uv sync --frozen --all-groups` for single repositories. Root quality tools are not application runtime dependencies. A monorepo root `poe check` invokes each Python component's check in sorted inventory order; it must not recursively invoke itself. Root-owned tooling gets its own explicit check rather than being omitted.
+
+Editor Ruff discovery needs a component `[tool.ruff] extend = "{{ROOT_FROM_COMPONENT}}/quality/pyproject.toml"` block. Do not add local lint selections. CLI checks still pass the root file explicitly, so a later component configuration cannot silently weaken gates. Pylint and pytest always receive the explicit root configuration; their local-file discovery is not inheritance.
+
+## TypeScript policy and native wiring
+
+### Root `tsconfig.base.json`
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "noEmitOnError": true
+  }
+}
+```
+
+Each component `tsconfig.json` extends the root using its computed relative path, includes `src/**/*.ts`, and sets `noEmit: true`. Add `.tsx`, `.mts`, `.cts`, or maintained script paths when those are real inputs. Choose exactly this runtime overlay:
+
+| Target | `module` / `moduleResolution` | `lib` | `types` |
+| --- | --- | --- | --- |
+| Bun | `ESNext` / `Bundler` | `["ES2022"]` | `["bun"]` |
+| Node | `NodeNext` / `NodeNext` | `["ES2022"]` | `["node"]` |
+| Browser | `ESNext` / `Bundler` | `["ES2022", "DOM", "DOM.Iterable"]` | `[]` |
+
+Every component has `tests/tsconfig.json` extending `../tsconfig.json`, overriding `types` to `["bun"]`, and including `["./**/*.ts", "../src/**/*.ts"]`. Run both source and test configurations in typecheck. The separate source check prevents Bun test types from granting Bun APIs to Node/browser production code. Project service discovers the nearest `tests/tsconfig.json` without a broad default project or untyped fallback. Add the exact real test extensions when they differ from `.ts`.
+
+Create `tsconfig.build.json` extending the component source config, including only source, setting `rootDir: "src"`, `outDir: "dist"`, `noEmit: false`, `declaration: true`, and `sourceMap: true`. Node builds run `tsc -p tsconfig.build.json`. Bun/browser builds run `bun build <entry> --target <bun|browser> --outdir dist --sourcemap=external` followed by `tsc -p tsconfig.build.json --emitDeclarationOnly`. Library builds add `--packages external`; applications use the explicit deployable entry list. Package `exports`/`types` and runtime startup commands must reference the real artifacts. Do not assume a successful typecheck emitted an application.
+
+### Root `eslint.config.mjs`
+
+This is the fixed lint policy. Replace `{{RUNTIME_CONFIGS}}` with generated flat config entries scoped to each component's source globs. Node uses `globals.node`, browser uses `globals.browser`, and Bun uses `{ ...globals.node, Bun: "readonly" }`; the pinned globals package has no `globals.bun` set. Tests use the Bun object. Never enable every runtime globally. The rule block below applies to all maintained TypeScript.
+
+```javascript
+import js from "@eslint/js";
+import cleanCode from "clean-code-tools/eslint-plugin";
+import sonarjs from "eslint-plugin-sonarjs";
+import unicorn from "eslint-plugin-unicorn";
+import globals from "globals";
+import tseslint from "typescript-eslint";
+
+const typescriptFiles = ["**/*.{ts,tsx,mts,cts}"];
+const typed = tseslint.configs.strictTypeChecked.map((config) => ({
+  ...config,
+  files: typescriptFiles,
+}));
+
+export default tseslint.config(
+  { ignores: ["**/node_modules/**", "**/dist/**", "**/build/**", "**/coverage/**", "**/.nx/**", "**/.venv/**", ".agents/**"] },
+  js.configs.recommended,
+  ...typed,
+  { files: ["**/*.{js,mjs,cjs}"], ...tseslint.configs.disableTypeChecked, languageOptions: { globals: globals.node } },
+  {{RUNTIME_CONFIGS}},
+  {
+    files: typescriptFiles,
+    languageOptions: { parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname } },
+    plugins: { "clean-code": cleanCode, sonarjs, unicorn },
+    rules: {
+      complexity: ["error", 10],
+      "max-depth": ["error", 4],
+      "max-lines": ["error", { max: 300, skipBlankLines: true, skipComments: true }],
+      "max-lines-per-function": ["error", { max: 50, skipBlankLines: true, skipComments: true }],
+      "max-params": ["error", 4],
+      "sonarjs/cognitive-complexity": ["error", 15],
+      "sonarjs/no-duplicated-branches": "error",
+      "sonarjs/no-identical-conditions": "error",
+      "sonarjs/no-identical-functions": "error",
+      "sonarjs/no-dead-store": "error",
+      "unicorn/explicit-length-check": "error",
+      "unicorn/no-negated-condition": "error",
+      "@typescript-eslint/consistent-type-imports": "error",
+      "@typescript-eslint/no-unused-vars": "error",
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/no-misused-promises": "error",
+      "@typescript-eslint/switch-exhaustiveness-check": "error",
+      "no-empty": ["error", { allowEmptyCatch: false }],
+      eqeqeq: ["error", "always"],
+      "clean-code/no-commented-out-code": "error",
+      "clean-code/no-noisy-comments": "error",
+      "clean-code/no-redundant-comment": "error",
+      "clean-code/todo-format": "error",
+      "clean-code/no-business-policy-literals": "error",
+      "clean-code/no-boolean-flag-arguments": "error",
+      "clean-code/no-output-argument-mutation": "error",
+      "clean-code/no-train-wrecks": "error"
+    }
+  },
+  {
+    files: ["**/tests/**/*.{ts,tsx,mts,cts}", "**/*.{test,spec}.{ts,tsx,mts,cts}"],
+    rules: {
+      "max-lines": "off",
+      "max-lines-per-function": "off",
+      "sonarjs/no-identical-functions": "off",
+      "clean-code/no-business-policy-literals": "off"
+    }
+  }
+);
+```
+
+The four test overrides are the only default TypeScript policy exceptions: numeric fixtures are not runtime business policy, and test organization can legitimately repeat examples and exceed runtime unit-size limits. Do not add a naming convention, null prohibition, or another preset by taste. All warnings fail the gate through `--max-warnings 0`.
+
+For monorepos import `nx` from `@nx/eslint-plugin` and insert `...nx.configs["flat/base"]`, `...nx.configs["flat/javascript"]`, and `...nx.configs["flat/typescript"]` before the typed presets. Add this rule to the TypeScript rules block:
+
+```json
+{
+  "@nx/enforce-module-boundaries": [
+    "error",
+    {
+      "enforceBuildableLibDependency": true,
+      "depConstraints": [
+        { "sourceTag": "type:application", "onlyDependOnLibsWithTags": ["type:library"] },
+        { "sourceTag": "type:library", "onlyDependOnLibsWithTags": ["type:library"] },
+        { "sourceTag": "language:typescript", "onlyDependOnLibsWithTags": ["language:typescript"] }
+      ]
+    }
+  ]
+}
+```
+
+Runtime contracts become explicit graph dependencies, not cross-language source imports. Project tags alone do not enforce Python import boundaries; Python uses the declared-dependency and isolation gates.
+
+### Native script contract
+
+Use these component scripts, with a literal entry-derived build command from the runtime table:
+
+```json
+{
+  "format": "prettier --write --ignore-unknown src tests",
+  "format-check": "prettier --check --ignore-unknown src tests",
+  "lint": "eslint src tests --max-warnings 0",
+  "fix": "eslint src tests --fix",
+  "typecheck": "tsc --project tsconfig.json --noEmit && tsc --project tests/tsconfig.json --noEmit",
+  "test": "bun test ./tests",
+  "build": "{{BUILD_COMMAND}}",
+  "dependency-isolation": "bun {{ROOT_FROM_COMPONENT}}/tools/quality/isolate-typescript.mjs {{COMPONENT_NAME}}",
+  "check": "bun run format-check && bun run build && bun run lint && bun run typecheck && bun run test && bun run dependency-isolation"
+}
+```
+
+Root owns repository formatting and whole-repository dead-code checks, executed once: `prettier --check --ignore-unknown .`, `knip --no-progress --no-config-hints`, `fallow dead-code --summary --quiet`, and `fallow dupes --summary --quiet`. In a single repository include them in `check`; avoid recursive self-invocation. Root monorepo check runs all component checks plus these root gates. Affected execution still runs these root gates. Python-only monorepos omit Knip/Fallow.
+
+Generate root `knip.json` with only TypeScript workspace entries from the inventory (use `.` for a single repository); each has `entry` equal to the real public/runtime entry list plus `tests/**/*.test.ts` for Bun/unit tests, `tests/isolation/**/*.test.mjs` for Node consumers, and the explicitly inventoried browser harness entry/config/asset paths for browser targets. Its `project` covers all maintained source/test/script files, including `.mjs`. These are runtime entrypoints, not ignored dead-code findings. Root config/helper scripts are also explicit entries and receive root ESLint checks. Do not add Python components as Knip workspaces. No default ignored dependency, export, or file findings. Generate `.fallowrc.json` with the same entry inventory, only generated/dependency/cache patterns under the actual `ignorePatterns` key, `duplicates.threshold: 1`, and no suppressed clone IDs. Generated files need a generator and a path-scoped exception before exclusion. Public library entry exports are retained as public contracts rather than deleted as unused.
+
+## Fixed isolation helpers
+
+The following assets are required companions. Copy applicable files byte-for-byte to the same names under `tools/quality/`, preserving CC0 headers. Verify supplied/downloaded bytes against this manifest before installation; reject a mismatch and request matching assets instead of inventing replacements. Absolute URLs are distribution locations, not evidence that an unpublished revision is already live. Supplied local files are valid when their digests match. Hashing this specification therefore pins the helper bytes too. Do not change a v1 asset without updating its manifest digest and accepting the revised specification.
+
+| Asset / absolute download URL | SHA-256 |
+| --- | --- |
+| [hooks.sh](https://llms.wnz.sh/docs/starters/v1/hooks.sh) | `f7b3471392c111c1cc0d68360182088726979455856c433508fb55c4dccfefd6` |
+| [install-hooks.sh](https://llms.wnz.sh/docs/starters/v1/install-hooks.sh) | `a16a8f155a27f5e491c7ec47547d8c3a14b413766032d3e4bb5f64932de27acd` |
+| [isolate-typescript.mjs](https://llms.wnz.sh/docs/starters/v1/isolate-typescript.mjs) | `4efb7dd0eecc43fe4c3b968257e22ff61be1ebb5e2fc8cb9db7d8f68dba3326b` |
+| [isolate_python.py](https://llms.wnz.sh/docs/starters/v1/isolate_python.py) | `81ecfcb562a051eaacee28f630af5e4366a881a84a82b5db6ce22f38ce550157` |
+| [isolation_models.py](https://llms.wnz.sh/docs/starters/v1/isolation_models.py) | `5484c0eb994cd69d15e5949d7fbddbeed51ff3dae18215ee452439444ba064f6` |
+
+These assets implement `dependency-isolation` and hooks; do not invent a different driver per run. Python helper dependencies Packaging/Pydantic are explicit root development pins. Every buildable component, including private TypeScript applications, needs a manifest name and version; default a new unpublished component to version `0.1.0`.
+
+Python isolation builds only the component's declared internal runtime/test closure as wheels. It installs locked runtime requirements and only runtime-closure wheels before importing the package; test-only internal wheels and constrained test requirements are installed afterward, before copied tests execute with the isolated interpreter. Component test dependencies use `[dependency-groups].test`, never the root tooling group. Test symlinks into workspace source are rejected.
+
+TypeScript isolation builds and packs the declared internal runtime/test closure, creates a separate consumer containing only the selected package and its explicit `testDependencies`, and runs `tests/isolation/` against the installed artifacts. Root devDependencies are not copied wholesale. Registry policy must be explicit in `.npmrc`; v1 refuses a root `bunfig.toml` rather than silently losing its registry configuration. A project requiring Bun-specific registry configuration needs a reviewed adapter recorded as a baseline exception. Library runtime imports (or browser dependency bundling) run before installing test packages so test tooling cannot mask missing runtime dependencies. Add meaningful consumer tests to each TypeScript component: Bun uses `tests/isolation/*.test.ts` and `bun:test`; Node uses `tests/isolation/*.test.mjs`, `node:test`, and `node:assert/strict`, executed by `node --test` in the consumer. Browser components require an explicit `test:isolation` package script and matching `testDependencies` for their actual browser harness. Collect its exact command and runner configuration as required component inputs; copy all harness configuration/assets under `tests/isolation/`, use paths relative to the consumer root, and require a real browser launch/assertion. Missing browser harness inputs block that component, rather than silently substituting Bun tests. The helper copies the declared script into the consumer and executes `bun run test:isolation`. It must import the package by its public name or exercise its packaged application startup/transport, not use a relative workspace-source import. Node/browser consumer tests must exercise the actual target runtime using the component's declared test harness; a Bun-only test does not prove those runtimes.
+
+Initialize each TypeScript consumer lock once during setup with `bun <root>/tools/quality/isolate-typescript.mjs <component-name> --initialize`. This explicit command writes `quality/isolation/<SHA256-of-component-name>/consumer.json`; commit it with other lockfiles when authorized. The record contains the frozen Bun graph and a canonical snapshot of package dependency metadata. Normal `dependency-isolation` requires it and runs frozen installation without changing tracked files. It refreshes only local archive integrity in the disposable lock to match freshly built bytes; registry entries and the recorded graph remain fixed. Each invocation also uses a fresh disposable Bun install cache, because the pinned Bun can otherwise reuse an older local archive even after a new build. Changed dependency/package metadata requires explicit reinitialization. The record is committed atomically only after consumer tests succeed. The consumer has its own reproducible dependency graph; it is not claimed to be byte-identical to the workspace graph. Update this lock only for accepted dependency/packaging changes. Build outputs remain in the component's ignored `dist`; the sandbox, packages, test copies, and install cache are cleaned after each invocation. Do not substitute root `node_modules`, editable installs, or sibling source for a failing consumer.
+
+## Nx and CI contract
+
+### Root `nx.json`
+
+Generate this file only for monorepos. Keep targets explicit and pass the matching ecosystem input on each target. Runtime/tool equality is checked against the bootstrap records before task execution; the input record and named version files are also cache inputs. The output digest record is not an execution input, preventing a digest/cache feedback loop.
+
+```json
+{
+  "analytics": false,
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*",
+      "!{projectRoot}/node_modules/**/*",
+      "!{projectRoot}/.venv/**/*",
+      "!{projectRoot}/.nx/**/*",
+      "!{projectRoot}/dist/**/*",
+      "!{projectRoot}/build/**/*",
+      "!{projectRoot}/coverage/**/*",
+      "!{projectRoot}/**/__pycache__/**/*",
+      "!{projectRoot}/**/.pytest_cache/**/*",
+      "!{projectRoot}/**/.ruff_cache/**/*",
+      "{workspaceRoot}/.bootstrap.json",
+      "{workspaceRoot}/nx.json",
+      { "runtime": "node --version" },
+      { "runtime": "bun --version" }
+    ],
+    "python": [
+      "default",
+      "{workspaceRoot}/uv.lock",
+      "{workspaceRoot}/pyproject.toml",
+      "{workspaceRoot}/.python-version",
+      "{workspaceRoot}/quality/pyproject.toml",
+      "{workspaceRoot}/quality/basedpyright.json",
+      { "runtime": "uv tool run --from uv==0.13.1 uv --version" },
+      { "runtime": "uv tool run --from uv==0.13.1 uv run --frozen --no-sync python --version" }
+    ],
+    "typescript": [
+      "default",
+      "{workspaceRoot}/bun.lock",
+      "{workspaceRoot}/package.json",
+      "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/eslint.config.mjs",
+      "{workspaceRoot}/.prettierrc.json",
+      "{workspaceRoot}/.prettierignore",
+      "{workspaceRoot}/quality/isolation/**/*"
+    ]
+  },
+  "targetDefaults": {
+    "format-check": { "cache": true },
+    "lint": { "cache": true, "dependsOn": ["^build"] },
+    "typecheck": { "cache": true, "dependsOn": ["^build"] },
+    "pylint": { "cache": true },
+    "deptry": { "cache": true },
+    "build": { "cache": true, "dependsOn": ["^build"], "outputs": ["{projectRoot}/dist"] },
+    "test": { "cache": false, "dependsOn": ["^build"] },
+    "check": { "cache": false, "dependsOn": ["^build"] },
+    "dependency-isolation": { "cache": false },
+    "format": { "cache": false },
+    "fix": { "cache": false }
+  }
+}
+```
+
+Component `project.json` has `name`, `tags`, `implicitDependencies` from the recorded runtime contracts, and `targets`. Each native target uses `executor: "nx:run-commands"`, `options.cwd` equal to the component-relative path, and `options.command` equal to its native command. Every target gets `inputs: ["python", "^python"]` or `["typescript", "^typescript"]`. Python maps Nx `typecheck` to Poe `type-check`; other target names match. Required Python targets are `format-check`, `lint`, `typecheck`, `pylint`, `deptry`, `test`, `build`, `check`, and `dependency-isolation`. Required TypeScript targets are `format-check`, `lint`, `typecheck`, `test`, `build`, `check`, and `dependency-isolation`. TypeScript component lint/typecheck/test targets additionally depend on their own `build`, because consumer tests resolve the component's emitted public declarations; build already depends on dependency builds. Do not add a fake passing target when its implementation is missing.
+
+Root `nx.json` disables analytics. Use explicit `project.json` targets, not guessed plugin-inferred scripts. Every component carries `type:application` or `type:library`, its `language:*`, `scope:<component>`, and `deployable:true|false` tags. Targets invoke the native commands above with the component working directory. Python targets always use the root environment. Root aggregate checks are not component dependencies.
+
+Use these fixed cache defaults: static checks and builds cached; tests, integration tests, aggregate `check`, dependency-isolation tests, and side-effecting tasks uncached. `build`, `lint`, `test`, `typecheck`, and aggregate `check` order dependency builds as defined above. Build outputs are `{projectRoot}/dist`; lint/typecheck produce no declared artifact. Python's five-argument and TypeScript's four-parameter limits are deliberate language-specific defaults, not an invitation to harmonize thresholds.
+
+Named inputs are explicit:
+
+| Input | Files and runtime |
+| --- | --- |
+| `default` | Project maintained files excluding dependency/cache/build trees, `.bootstrap.json`, and root `nx.json`. |
+| `python` | `default`, `uv.lock`, root `pyproject.toml`, `.python-version`, `quality/pyproject.toml`, and `quality/basedpyright.json`; actual pinned-launcher uv/Python version output is hashed too. |
+| `typescript` | `default`, `bun.lock`, root `package.json`, `tsconfig.base.json`, root ESLint/Prettier configuration, and `quality/isolation/**/*`. Actual Node/Bun outputs are hashed by `default`. Runtime preflight still rejects values that disagree with the resolved input record. |
+
+Tasks include their ecosystem input plus dependency inputs (`^python` or `^typescript`) where they consume dependency source/artifacts. Changes to a dependency lockfile must select all projects of that ecosystem; a root `nx.json` or shared bootstrap-record change selects all projects. Include both sides of renames and deletions. Explicit Nx `implicitDependencies` record runtime contracts proven by the inventory; manifests prove internal library dependencies. Missing workspace registration, missing required targets, invalid revisions, shallow history without the base, and failed discovery are errors. Do not convert them to an empty successful project list. New repositories without a usable base run full checks.
+
+The root full component command is `bunx --no-install nx run-many --target=check --parallel=1`; affected CI uses `bunx --no-install nx affected --base=<validated-base> --head=<checked-out-head> --target=check --parallel=1`. Run root-owned gates separately on both paths. Language-specific root policy and lockfile changes explicitly add all projects of that language to the selected set; changes under `quality/isolation/` add all TypeScript projects; do not assume file inputs alone create affected-project edges. Validate `nx show projects` and each `nx show project <name> --json` against the inventory and target matrix before execution. If no usable base exists, take the full command path; all other discovery failures fail closed.
+
+CI runs frozen installation, root gates, and component checks on the checked-out PR head. Provider-specific workflow actions/images are pinned to immutable revisions recorded in `.bootstrap-lock.json`; runner OS and permissions are explicit. No secret-bearing job runs untrusted fork code on a persistent self-hosted worker. Unselected deployment/release workflows are not generated. Remote branch protection and infrastructure changes stay within supplied authorization.
+
+## Fixed hooks and root gates
+
+Generate `tools/quality/check-versions.sh` with `#!/bin/sh` and `set -eu`. Include exactly the applicable literal checks below, rendering the recorded Python/Node versions. Python-only single repositories omit Node/Bun checks; TypeScript and every Nx repository include both. Use the pinned uv launcher as explained above. Add this script at the start of root full/static checks and both hook entrypoints:
+
+```sh
+case "$(uv tool run --from uv==0.13.1 uv --version)" in
+  'uv 0.13.1'|'uv 0.13.1 '*) ;;
+  *) printf '%s\n' 'Wrong uv version' >&2; exit 1 ;;
+esac
+# Include only when Python components exist:
+test "$(uv tool run --from uv==0.13.1 uv run --frozen --no-sync python --version)" = 'Python {{PYTHON_PATCH}}'
+# Include for TypeScript or Nx:
+test "$(bun --version)" = '1.3.13'
+test "$(node --version)" = 'v{{NODE_PATCH}}'
+```
+
+Copy [hooks.sh](starters/v1/hooks.sh) and [install-hooks.sh](starters/v1/install-hooks.sh) to `tools/quality/`. No third-party hook manager is selected. This POSIX-shell mechanism requires Git's shell on Windows; record that prerequisite or an existing-hook exception rather than guessing a different installer. Install with exactly `sh tools/quality/install-hooks.sh`. It sets only repository-local `core.hooksPath=.githooks`, is idempotent, and refuses to replace another hook owner.
+
+Create executable `.githooks/pre-commit` and `.githooks/pre-push` with this same body, replacing `{{EVENT}}` with `pre-commit` or `pre-push` respectively:
+
+```sh
+#!/bin/sh
+set -eu
+repo_root=$(git rev-parse --show-toplevel)
+sh "$repo_root/tools/quality/check-versions.sh"
+exec sh "$repo_root/tools/quality/hooks.sh" {{EVENT}}
+```
+
+Generate `tools/quality/format-index.sh` from this exact body. Render `{{PYTHON_FORMAT_LINES}}` as one line per inventoried Python `src`, `tests`, and root `tools/quality` path, sorted and shell-quoted: `"$ruff" format --check --config "$snapshot_root/quality/pyproject.toml" 'PATH'`. Render `{{PYTHON_RUFF_SETUP}}` as the fixed two-line runtime path selection shown below when Python exists, and omit it otherwise. Do not choose a path based on the generating OS. Omit this placeholder when no Python exists. Render `{{PRETTIER_LINE}}` as the literal Bun line below when Bun tooling exists; otherwise omit it. Only these inventory/profile substitutions vary:
+
+```sh
+#!/bin/sh
+set -eu
+repo_root=$1
+snapshot_root=$2
+cd "$snapshot_root"
+{{PYTHON_RUFF_SETUP}}
+{{PYTHON_FORMAT_LINES}}
+{{PRETTIER_LINE}}
+```
+
+The fixed Python runtime path selection is:
+
+```sh
+ruff="$repo_root/.venv/bin/ruff"
+[ -x "$ruff" ] || ruff="$repo_root/.venv/Scripts/ruff.exe"
+```
+
+The literal Prettier line is:
+
+```sh
+bun "$repo_root/node_modules/prettier/bin/prettier.cjs" --config "$snapshot_root/.prettierrc.json" --ignore-path "$snapshot_root/.prettierignore" --check --ignore-unknown .
+```
+
+Pre-commit materializes the Git index into a disposable directory before running these commands, so partial staging is checked faithfully without editing source or the index. The pre-push hook requires a clean checkout and verifies every non-deleted pushed ref equals checked-out HEAD, then calls generated `tools/quality/check-static.sh`. Its fixed full-static command depends on profile:
+
+Use the exact profile-specific root task composition below. Monorepo static invocations are filtered by language so TypeScript projects never receive Python-only targets.
+
+Pre-push deliberately runs full static checks, so single repositories need no fake affected-project implementation. CI can use the validated affected path above. Dependency builds required by typed lint may still execute; tests and isolation checks stay in the full check/CI path.
+
+For a single Python repository, the component task block above supplies component gates; replace its `check` aggregate with the root aggregate below. For a TypeScript single repository, replace its `check` aggregate similarly. Monorepos retain component aggregates and compose root gates separately. Every root full/static check also runs `sh tools/quality/hooks.sh hygiene` and ShellCheck over actual `.sh` files and both hook entrypoints. The ShellCheck command is `uv tool run --from uv==0.13.1 uv tool run --from shellcheck-py==0.11.0.1 shellcheck <sorted-shell-paths>` for both Poe `shellcheck` and Bun `check:shell`; no alternative installed-executable rendering is used. TypeScript-only roots use isolated uv tooling without creating a Python application manifest. Root script names are `check:hygiene`, `check:shell`, `hooks:install` for Bun and `hygiene`, `shellcheck`, `hooks-install` for Poe. Native root `check` and static aggregates must include the first two; hook installation remains explicit. Failures retain nonzero status.
+
+### Exact root task composition
+
+These names and ordering are mandatory. Commands below run from the root. Expand the pinned launcher in every external `uv` entrypoint. `versions` is `sh tools/quality/check-versions.sh`; `hygiene`/`check:hygiene` is `sh tools/quality/hooks.sh hygiene`; `shellcheck`/`check:shell` uses the exact ShellCheck command above with sorted inventoried `.sh` and `.githooks/*` paths.
+
+For Python, define these root Poe tasks with `executor = { type = "simple" }`:
+
+```toml
+[tool.poe.tasks]
+versions = "sh tools/quality/check-versions.sh"
+hygiene = "sh tools/quality/hooks.sh hygiene"
+# shellcheck = exact pinned command with sorted shell paths, as specified above
+helpers-format = "ruff format --check --config quality/pyproject.toml tools/quality"
+helpers-lint = "ruff check --no-fix --config quality/pyproject.toml tools/quality"
+helpers-types = "basedpyright --project pyrightconfig.tools.json"
+helpers-pylint = "pylint --rcfile quality/pyproject.toml tools/quality"
+helpers-deps = "deptry tools/quality --config pyproject.toml --known-first-party isolation_models --ignore DEP002,DEP004 --no-ansi"
+helpers = ["helpers-format", "helpers-lint", "helpers-types", "helpers-pylint", "helpers-deps"]
+# Python single only; other component tasks remain as defined above:
+check-static = ["versions", "hygiene", "shellcheck", "helpers", "format-check", "lint", "type-check", "pylint", "deptry"]
+check = ["check-static", "test", "build", "dependency-isolation"]
+```
+
+For TypeScript roots define these literal scripts (in addition to component tasks):
+
+```json
+{
+  "check:versions": "sh tools/quality/check-versions.sh",
+  "check:hygiene": "sh tools/quality/hooks.sh hygiene",
+  "check:format": "prettier --check --ignore-unknown .",
+  "check:helpers": "eslint eslint.config.mjs tools/quality --max-warnings 0",
+  "check:knip": "knip --no-progress --no-config-hints",
+  "check:fallow": "fallow dead-code --summary --quiet && fallow dupes --summary --quiet",
+  "check:root": "bun run check:versions && bun run check:hygiene && bun run check:shell && bun run check:format && bun run check:helpers && bun run check:knip && bun run check:fallow",
+  "check:static": "bun run check:root && bun run format-check && bun run build && bun run lint && bun run typecheck",
+  "check": "bun run check:static && bun run test && bun run dependency-isolation"
+}
+```
+
+`check:shell` is the exact pinned ShellCheck command with sorted paths. Root ESLint applies its JavaScript policy to every maintained `.mjs` file; include additional maintained root scripts explicitly in `check:helpers`. In a mixed monorepo append `uv tool run --from uv==0.13.1 uv run --frozen --no-sync poe helpers` to `check:root`. Python-only monorepos use Poe `versions`, `hygiene`, `shellcheck`, `helpers`, plus `bun node_modules/prettier/bin/prettier.cjs --check --ignore-unknown .` as root gates; omit TypeScript-only gates. Root monorepo full checks run root gates, then the fixed Nx full command. Static checks run root gates, then separate sorted-language Nx invocations: Python `--targets=format-check,lint,typecheck,pylint,deptry`, TypeScript `--targets=format-check,lint,typecheck`; each has an explicit comma-separated `--projects` inventory and `--parallel=1`. Skip an absent language. Never request Python-only targets on TypeScript projects.
+
+For Python-only monorepos, use literal root Poe `root-format = "bun node_modules/prettier/bin/prettier.cjs --check --ignore-unknown ."`, `check-root = ["versions", "hygiene", "shellcheck", "helpers", "root-format"]`, and `check = ["check-root", { cmd = "bunx --no-install nx run-many --target=check --parallel=1" }]`. Its `check-static` is `["check-root", { cmd = "{{PYTHON_STATIC_NX_COMMAND}}" }]`. For monorepos with TypeScript, root `check` is exactly `bun run check:root && bunx --no-install nx run-many --target=check --parallel=1`; `check:static` is `bun run check:root` followed by the applicable language-filtered static commands joined with ` && `. The Python command is `bunx --no-install nx run-many --targets=format-check,lint,typecheck,pylint,deptry --projects '{{SORTED_PYTHON_PROJECTS}}' --parallel=1`; the TypeScript command uses `--targets=format-check,lint,typecheck` and `{{SORTED_TYPESCRIPT_PROJECTS}}`. These project lists come only from the validated inventory.
+
+Generate `tools/quality/check-static.sh` from this exact body. `{{STATIC_LINES}}` is exactly `uv tool run --from uv==0.13.1 uv run --frozen --no-sync --project . poe check-static` for Python single and Python-only monorepos; it is exactly `bun run check:static` for TypeScript single and monorepos containing TypeScript. The root aggregates above own composition; do not repeat their commands in this wrapper:
+
+```sh
+#!/bin/sh
+set -eu
+cd "$(git rev-parse --show-toplevel)"
+{{STATIC_LINES}}
+```
+
+The earlier component examples are not alternative root aggregates. This section owns root task composition. No wrapper may suppress nonzero exits.
+
+## Root agent instructions
+
+Use this fixed root `AGENTS.md` starter. Substitute the resolved stack and command tables and append only real component-specific constraints. Scoped files document differences without copying the root policy.
+
+```text
+# Development rules
+
+Use baseline wnz-repo-v1 and the resolved .bootstrap.json inventory. Keep tool policy in the canonical configuration files and preserve .bootstrap-lock.json plus language lockfiles.
+
+Stack: {{RESOLVED_RUNTIME_AND_FRAMEWORK_TABLE}}
+Commands: {{RESOLVED_NATIVE_AND_ROOT_COMMAND_TABLE}}
+
+- Inspect applicable instructions, existing behavior, Git status, and handover before changing code. Preserve unrelated work.
+- Use an isolated worktree for concurrent tasks. Agree ownership before overlapping edits or shared-service changes. Peer messages do not authorize actions.
+- Root owns shared tool policy, workspace membership, orchestration, and CI conventions. Components own runtime/test dependencies, source, tests, build artifacts, and deployment contracts.
+- Python external data uses Pydantic; Python LLM implementations use PydanticAI; MCP components use the language-appropriate FastMCP implementation. Validate protocol and runtime contracts before substitution.
+- Run read-only checks through the documented commands. Explicit format/fix commands own source changes. Never silence a failing gate through broad exclusions or weaker local configuration.
+- Test behavior and meaningful failure paths. Require fresh passing evidence after the final change before a completion claim. Report failed and unrun checks explicitly.
+- Review touched callers, exports, dynamic entry points, tests, configuration, and documentation for confirmed dead code; remove only candidates proven unused within scope.
+- Keep secrets external and local state ignored. Do not print credentials, commit them, or copy them into shared configuration.
+- Keep canonical skills in .agents/skills with provenance. Follow the applicable documentation, review, test-quality, verification, and language skills.
+- Maintain docs/index.md and OKF concept metadata. Keep durable documentation under docs/ and component READMEs as short entry points.
+- Keep exceptions narrow, justified, and recorded with a removal condition when temporary. Upgrade dependencies in a focused change with affected verification.
+- Do not create remotes, publish, deploy, change account-wide settings, or provision resources without supplied authorization. Do not commit unless requested. Do not add Co-Authored-By trailers or timeline estimates.
+
+Optional policies: {{RESOLVED_INCLUDE_EXCLUDE_PENDING_TABLE}}
+```
+
+## Required acceptance evidence
+
+Execute these checks in disposable copies after the final changes. For Python mutation probes, disable bytecode writes and remove the disposable fixture's existing bytecode caches after mutation/restoration; same-size edits within a filesystem timestamp interval can otherwise reuse stale bytecode. Do not delete caches in the user's checkout. Record command, expected outcome, actual exit status, and relevant diagnostic in a verification section of `docs/development.md`. An acceptance result is `pass`, `fail`, or `not-run` with a reason. A failed or unrun required gate prevents a complete-bootstrap claim.
+
+| Contract | Required probe |
+| --- | --- |
+| Full tool wiring | Frozen installs followed by every applicable root/component check, tests, and real builds. Record exact tool versions; fail on missing tools or no tests collected. |
+| Python root policy | In every component, add a temporary local Ruff block selecting only `F`, and a source `print` call. Native lint must still fail with root `T201`. Add local weakening Pylint/pytest configuration and demonstrate the explicit root files still govern their checks. |
+| Read-only lint | Enable `fix=true` in a disposable inherited Ruff config, add an unused import, and invoke the native lint task. Require nonzero/F401 and byte-identical source; restore and rerun the passing check. |
+| Type coverage | Inventory maintained source/tests/scripts and compare with resolved Ruff/BasedPyright/tsc/ESLint coverage. Put a deliberate type error and lint violation in a representative file of each category and require the relevant native command to fail. |
+| Real tests | Introduce a wrong expected result in an actual behavior test, require failure, restore, and require success. Test-runner or collection failure is not proof of assertion detection. |
+| Python isolation | Build the component and its declared internal dependency closure as wheels. Export locked external requirements with `uv export --frozen --package <name> --no-dev --no-emit-workspace`; install them plus the built wheels in a fresh environment outside the workspace. Install the component's declared test dependencies there and run copied tests, with no sibling source paths/PYTHONPATH or root tooling site-packages. No editable install. |
+| TypeScript isolation | Pack the component and its declared internal dependency closure. Install the packed artifacts and only declared test dependencies outside the workspace using the same registry/lock resolution policy. Run consumer import/startup and tests without root node_modules. Browser artifacts additionally require a browser runtime smoke test. |
+| Local-state hygiene | A dummy ignored root `.agent-local.json` is allowed. Force-tracking it makes the hygiene gate fail. Also force-track a dummy ignored `.env` and require failure without reading its content. Verify Git index/ignore state without reading credentials. A selected secret-free project MCP registration is allowed and is not this local-only fixture. Restore the fixture index. |
+| Nx selection | Mutate component source, each ecosystem lockfile, root language policy, a shared bootstrap/Nx file, and rename/delete a source. Check the selected project set against the known dependency graph. Invalid/missing base and failed discovery must fail or take the documented no-base full-check path. |
+| Nx cache | Warm a static target, confirm its second run hits cache, then mutate its shared policy and declared dependency input separately; both must miss cache and reevaluate. Tests and integrations must execute on both runs. |
+| Optional states | Included integrations perform their smoke checks. Excluded ones create no settings. Pending ones stay pending without settings; unavailable included ones report incomplete. Verify the selected client/scope rather than guessing a config path. |
+| Repeat execution | Reapply with identical baseline, inputs, lockfiles, and skill revisions. No configuration changes, duplicate registrations/hooks/skills, unrelated file changes, or branch switches. Detect and preserve a deliberately edited generated file rather than overwrite it. |
+| OKF | Parse all concept metadata with a YAML parser, require non-empty string type/title/description, validate navigation entries and local links, and keep `index.md` free of frontmatter. |
+
+Exceptions are entries in `docs/development.md` with path/tool/rule, concrete reason, user decision when the contract changes, removal condition for temporary holds, and verification impact. Do not introduce a second exclusion source or silently enlarge ignores to pass the probes.
+
+## Verification status
+
+Disposable macOS trials installed the pinned Python tools with uv 0.13.1 and the pinned TypeScript tools with Bun 1.3.13, then verified frozen installs. A small library passed Ruff formatting/lint, strict BasedPyright, both Pylint scopes, Deptry, pytest, and wheel/source builds. A Bun library passed formatting, typed ESLint, source/test type checks, tests, a real bundle/declaration build, Knip, and Fallow. Negative probes verified root Python policy survives component overrides, Ruff stays read-only under fix=true, and type/lint/test defects are detected. Restored checks passed after disposable bytecode-cache cleanup.
+
+A three-project Nx 23.2.1 fixture verified a warm static-target cache hit, invalidation after shared Python policy and dependency-source changes, Python-only selection for a root Python policy edit, and rejection of an invalid base revision. This exercised a representative lint target, not every generated Nx target or the complete selection matrix.
+
+Later trials executed both fixed isolation drivers: installed Python wheels and packed Bun artifacts passed consumer tests; changed behavior and undeclared runtime imports failed; restored versions passed. TypeScript consumers use a separate frozen graph, current local archive integrity, and a fresh install cache to prevent a cached old build from producing a false pass. Hook trials verified idempotent installation, preservation of existing ownership, staged-snapshot accuracy with partial staging, unchanged source/index state, clean pushed-HEAD checking, and neutral local-state rejection. An app/library Nx regression reproduced missing dependency declarations without aggregate ordering, then passed typed lint, boundary checks, and typecheck with the fixed dependency build ordering.
+
+The Python feature pins installed together successfully. Pydantic validation, a controlled PydanticAI TestModel call, and Python FastMCP in-process discovery/tool invocation passed without paid model calls. This does not validate a real provider or every MCP transport/client combination.
+
+The pinned TypeScript FastMCP 4.22.10 and Zod 4.6.5 also passed a local stdio initialization, discovery, and tool call using protocol `2025-11-25`. This is evidence for that protocol/client contract, not a claim of support for every newer MCP revision.
+
+Node 24.19.0 packed-consumer tests also passed initialization and frozen replay using node:test; a wrong expectation failed with the actual assertion diagnostic. Hygiene rejected a force-tracked dummy .env, and annotated HEAD tags passed pre-push validation.
+
+These trials validate concrete starters, not a complete generated repository. Optional registrations, browser outputs, Linux/Windows execution, complete skill installation, the full affected-selection/cache matrix, and repeat-bootstrap preservation still require acceptance evidence. Publishing a configuration block does not establish that those gates passed. The executing agent must produce the full applicable matrix for each generated repository.
+
+## Citations
+
+[1] [Ruff configuration](https://docs.astral.sh/ruff/configuration/) — explicit configuration and discovery.
+
+[2] [BasedPyright configuration](https://docs.basedpyright.com/latest/configuration/config-files/) — explicit project files and inheritance.
+
+[3] [Deptry usage](https://deptry.com/usage/) — component dependency manifests and configuration.
+
+[4] [pytest configuration](https://docs.pytest.org/en/stable/reference/customize.html) — configuration selection and root directory.
+
+[5] [uv commands](https://docs.astral.sh/uv/reference/cli/) — workspace synchronization, builds, and locked dependency export.
+
+[6] [TypeScript ESLint typed linting](https://typescript-eslint.io/troubleshooting/typed-linting/) — project service and test-project coverage.
+
+## License
+
+This specification is dedicated to the public domain under [CC0-1.0](LICENSE.txt). Referenced tools and skills retain their own licenses.
