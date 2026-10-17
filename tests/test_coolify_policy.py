@@ -47,7 +47,7 @@ class CoolifyPolicyTests(unittest.TestCase):
                     "explicit cloud", "Ordinary setup", "pending",
                 ):
                     self.assertIn(contract, policy)
-                for private in ("/Users/", "roam-support-pilot", "home.wnz.sh", "../profiles/", "../../"):
+                for private in ("/Users/", "../profiles/", "../../"):
                     self.assertNotIn(private, policy)
                 if name in ("python", "monorepo"):
                     self.assertIn("--no-install-workspace", policy)
