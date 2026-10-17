@@ -11,7 +11,7 @@ Working base configuration for Python, TypeScript and mixed Nx monorepos. Copy a
 Each directory contains locked dependencies, native commands, Git hooks, CI, agent rules and short indexed docs. Tiny input-validation fixtures prove the tooling is connected; this is not an example application.
 
 ```sh
-git clone --branch v1.1.0 --depth 1 https://github.com/wnz99/repo-starters.git
+git clone --branch v1.1.1 --depth 1 https://github.com/wnz99/repo-starters.git
 mkdir my-project
 cp -R repo-starters/profiles/python/. my-project/
 cd my-project
