@@ -46,22 +46,12 @@
   "documentationLanguage": "English",
   "license": "pending",
   "options": {
-    "cloud": {
-      "answer": null,
-      "details": null,
-      "state": "pending"
-    },
     "merge": {
       "answer": null,
       "details": null,
       "state": "pending"
     },
     "promotion": {
-      "answer": null,
-      "details": null,
-      "state": "pending"
-    },
-    "selfHostedCi": {
       "answer": null,
       "details": null,
       "state": "pending"

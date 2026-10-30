@@ -18,7 +18,7 @@
     }
   },
   "files": {
-    ".bootstrap.json": "fd70df9d77ed3b7c6d014e50e3a343533c1cc922b572cf8096b19f014627727e",
+    ".bootstrap.json": "268cc36ce897d4dd5dfabf1d8fde0e24892588fab6b159a62053a28fb970723e",
     ".editorconfig": "71589501b7a5dd84d122c08a34d94001034ec89843a90e2e790a65087c8a4fcc",
     ".fallowrc.json": "202b2d05b5759d224a71783541c13fce5b558a55cd6007ec5ff3a2e2a0d300fc",
     ".gitattributes": "d60f352d0db1404c70afb4bb8b2ca3fd1c610572aa40720e8a0b7baa7885418c",
@@ -29,18 +29,19 @@
     ".node-version": "7e8a2fa94951112b894a3dbe3d05efef5e9263741fa49125f0a70f40fedab4cc",
     ".prettierignore": "4a24003f9519e5524195d5cb3354579db4ef2140c5a1c189f5de659d02a7b37b",
     ".prettierrc.json": "b79ab1996af4af804642c6b1e111c9143582a42a7797c9451b00f0617dd16d26",
-    "AGENTS.md": "9e626ac87e93eb0d9b37bac66ac13176bfe57a6ef200ebe287c129d715fe45ac",
+    "AGENTS.md": "f4504800906914ae47246bec9edbde8da3cec5f309afc9f24b4daf8e2834c341",
     "LICENSE": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499",
-    "POLISH.md": "b047f384a1a69bd099b9f3e27acd473b1087cd89715a0f06d359430c4f25c08f",
+    "POLISH.md": "58ebbdaa2628f9f342db473dd2556c9934692f99cd05c886478eed4f0f37fb84",
     "README.md": "a61bd762547315f8fefafc4b87f489904295980969513155a6465ea9754c4b2d",
     "bun.lock": "a4400caf5dcf0209e5500ec1b908e3aad8d6fdedd65dd6fb81e59c10be419c97",
     "docs/README.md": "6bcc4774353548c96d715ac51d00f8b9b6ac4768cbb36417fe3a22c0e420de36",
-    "docs/bootstrap-records.md": "ff6d989d1995a2d00ccd6f251438c9f4d8732519c977872c72552fd5b6649531",
-    "docs/coolify.md": "5d8d8ebe157105e3e8aa165835491a13a33b0bd725e7bcad1e10725439ac3892",
-    "docs/development.md": "fb1df53c162ee0f19fe784e1842f996dc9cc1f582adbb7ebcecaf6b3ef84a80c",
-    "docs/index.md": "f81c51d40797c36a391154c1016562cda931805d9f04fc9efaa605450fdf6f06",
+    "docs/bootstrap-records.md": "6d2028ca854fbe453681b8031acd44b4bc5039e29f7e96fd7869056206602b00",
+    "docs/coolify.md": "dde289c6ec28c74354ce85c2e7bfa5072ef0e18bbb18c550169b4d3b06db3e1c",
+    "docs/development.md": "88f12c356b879cda34504f8fc4313aeda720c3b961febd3069de665db7af8b62",
+    "docs/index.md": "a8d7fdc2264c5afd4c478dd67eb92a22634cf285cdeab7642396abce0a5cdb60",
     "docs/quality.md": "d15538cdf9561a5f3992d3b79345a701f8b5802f5b000b9f0851220304ee1187",
-    "docs/sources.md": "86418269b8541831051b69545b05eff5429b65809c93c10ff29aee79dd5a062b",
+    "docs/serena.md": "68b7a023aca2182658826cdcd0d9d1031e1760059c2e313399959877b0f46969",
+    "docs/sources.md": "db2555426a36e700d8be776602b0666682551d37ea0ec0368c873b0cbcbf4ae5",
     "docs/verification.md": "6d404e40458cfbaf5161bbc75328a57ff81947b809a118114391692d7df45176",
     "eslint.config.mjs": "96bd898f6a8f6a78e2c26ba357f642df825dd293f24702a5c6b7a8c140109712",
     "knip.json": "fa121f078815df97bcb6673fe1dbfcc16fe837bdf6f7cab1bb46f6bfdd7d5032",
@@ -70,5 +71,5 @@
     "uv": "0.13.1"
   },
   "skills": {},
-  "specificationSha256": "ff6d989d1995a2d00ccd6f251438c9f4d8732519c977872c72552fd5b6649531"
+  "specificationSha256": "6d2028ca854fbe453681b8031acd44b4bc5039e29f7e96fd7869056206602b00"
 }

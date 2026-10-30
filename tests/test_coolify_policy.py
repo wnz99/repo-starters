@@ -27,10 +27,10 @@ class CoolifyPolicyTests(unittest.TestCase):
                     "(coolify.md#verification-and-rollback)",
                     (profile / "docs/verification.md").read_text(),
                 )
-                self.assertEqual(
-                    json.loads((profile / ".bootstrap.json").read_text())["options"]["cloud"],
-                    {"state": "pending", "answer": None, "details": None},
-                )
+                options = json.loads((profile / ".bootstrap.json").read_text())["options"]
+                self.assertEqual(set(options), {"promotion", "merge", "serena", "semanticMcp"})
+                for option in options.values():
+                    self.assertEqual(option, {"state": "pending", "answer": None, "details": None})
 
     def test_required_deployment_outcomes(self):
         for name in PROFILES:
@@ -44,7 +44,7 @@ class CoolifyPolicyTests(unittest.TestCase):
                     "Graceful shutdown", "PID 1", "SIGTERM", "SIGINT", "owned child",
                     "Verification and rollback", "negative watch", "read back",
                     "previous image", "Automatic and adapted behavior",
-                    "explicit cloud", "Ordinary setup", "pending",
+                    "explicit deployment", "Ordinary setup", "pending",
                 ):
                     self.assertIn(contract, policy)
                 for private in ("/Users/", "../profiles/", "../../"):

@@ -7,3 +7,4 @@
 - [Bootstrap records](bootstrap-records.md) — Input states, replay rules and generated-content digest contract.
 - [Acceptance checklist](verification.md) — Required behavior probes and evidence for an adapted repository.
 - [Coolify deployment adaptation](coolify.md) — Selected-deployment cache, watch, shutdown and rollback policy.
+- [Shared Serena configuration](serena.md) — Standard serena-shared setup and verification for optional Serena integration.
